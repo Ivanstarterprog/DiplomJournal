@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load sass_tags %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в Электронный журнал КузПК</title>
+    {% load static %}
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link href="{% sass_src 'login.scss' %}" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <main>
+        <header>
+            <h3>Кузбасский педагогический колледж</h3>
+            <h2>Электронный журнал</h2>
+        </header>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.username }}
+                {{ form.username.errors }}
+                {{ form.password }}
+                {{ form.password.errors }}
+            </div>
+            {{ form.non_field_errors }}
+            <button type="submit"><i class="fa fa-sign-in" aria-hidden="true">Войти</i></button>
+        </form>
+    </main>
+</body>
+</html>

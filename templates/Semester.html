@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block body %}
+    <h3>Сводная ведомость за {{ course }} курс, {{ yearhalf }} полугодие</h3>
+    <div class="marksTable">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="3" colspan="3">Сводная ведомость</th>
+                    <th colspan="{{ semesters }}">
+                        Семестр
+                    </th>
+                    {% if diploms != 0 %}
+                        <th colspan="{{ diploms }}">
+                            Диплом
+                        </th>
+                    {% endif %}
+                </tr>
+                <tr>{% for name in semesterNames %}
+                    <th style="writing-mode:tb-rl; vertical-align: middle;"><div style="height:100%;width:100%;">{{name}}</div></th>
+                {% endfor %}
+                {% for name in diplomNames %}
+                    <th><div style="writing-mode:tb-rl; width: max-content;width:100%">{{name}}</div></th>
+                {% endfor %}
+            </thead>
+            <tbody>
+                <tr>
+                    {% for student, semester, diplom in students %}
+                        <tr>
+                        <th colspan="3">{{student}}</th>
+                        {% for mark in semester %}
+                                <td style="width: 15px;" colspan="1">{{ mark.mark }}</td>
+                        {% endfor %}
+                        {% for mark in diplom %}
+                                <td style="width: 15px;" colspan="1">{{ mark.mark }}</td>
+                        {% endfor %}
+                        </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </table>
+    </div>
+{% endblock %}

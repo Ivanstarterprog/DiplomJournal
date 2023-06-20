@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+{% block body %}
+    <h2>Личная информация пользователя</h2>
+    <p>ФИО - {{ full_name }}</p>
+    <p>Роль - {{ userFind.get_role_display }}</p>
+    <p>Дата рождения - {{ userFind.birthday }}</p>
+    <p>Номер телефона - {{ userFind.num }}</p>
+    <p>Проживает по адресу - {{ userFind.address }}</p>
+    {% if userFind.role == 'ST' %}
+        {% if exist %}
+            <p>Обучается в группе - <a href="{% url 'Main:group' group_num=group.name%}"><span title="{{ group.speciality.code }} {{ group.speciality.name }}">{{ group.name }}</span></a></p>
+            <h3>Актуальные предметы: </h3>
+            {% render_table subjects %}
+        {% else %}
+            <h3>Пока студент не привязан к группе!</h3>
+        {% endif %}
+    {% endif %}
+    {% if curator %}
+        <p>Является Куратором следующих групп:
+        {% for group in curator %}
+            <a href="{% url "Main:group" group_num=group.name %}"> {{ group }} </a>
+        {% endfor %}</p>
+    {% endif %}
+    {% if userFind.role == 'AD' or userFind.role == 'TE'%}
+        <p><a href="{{ userFind.id }}/pastSubjects">Предметы, которые ранее преподавал преподаватель</a></p>
+        <h3>Преподаёт следующие предметы: </h3>
+        {% render_table subjects %}
+    {% endif %}
+{% endblock %}

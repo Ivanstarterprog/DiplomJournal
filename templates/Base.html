@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% load sass_tags %}
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Электронный журнал</title>
+    <link rel="icon" href='{% static 'img/logo.ico' %}'>
+    <script src="{% static "jquery-3.7.0.min.js" %}"></script>
+    <link rel="stylesheet" href={% static "font-awesome-4.7.0/css/font-awesome.css" %}>
+    <link href="{% sass_src 'main.scss' %}" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <menu class="box">
+        <img src={% static 'img/logo.webp' %}>
+        <p>{{ user.get_Fio }}<br>
+            {{ user.get_role_display }}</p>
+        {% if user.role != 'IT'%}
+            <a href="{% url 'Main:index' %}" class="custom-btn btn"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp;Личный кабинет</a>
+        {% endif %}
+
+        {% if user.role != 'ST'%}
+            <a href="{% url 'Main:groups' %}" ><i class="fa fa-address-book" aria-hidden="true"></i>&nbsp;Список групп</a>
+        {% endif %}
+        {% if user.role == 'IT' or user.role == 'AD' %}
+            <a href="{% url 'Main:workers' %}" ><i class="fa fa-users" aria-hidden="true"></i>&nbsp;Сотрудники колледжа</a>
+        {% endif %}
+        {% if user.role == 'IT' %}
+            <a href="/admin"><i class="fa fa-code" aria-hidden="true"></i>&nbsp;Админ.панель</a>
+        {% endif %}
+        <a href="{% url 'Main:logout' %}" class="logout"><i class="fa fa-sign-out fa-fw" aria-hidden="true"></i>&nbsp;Выйти</a>
+    </menu>
+    <main class="box">
+        {% block body %}
+
+        {% endblock %}
+    </main>
+</body>
+</html>

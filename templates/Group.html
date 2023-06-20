@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load render_table from django_tables2 %}
+{% block body %}
+    <script>
+    let UpdateSemesterInfo = function (called, semesterID){
+
+            $.post({
+                data: {
+                    'semesterID': semesterID,
+                    'startdate': $("#"+semesterID+'_startdate').val(),
+                    'rubej': $("#"+semesterID+'_rubej').val(),
+                    'weeks': $("#"+semesterID+'_weeks').val()},
+                url: '{% url "Api:semesterInfo" %}'
+            })};
+
+    </script>
+    <h2>Группа {{ group.name }}</h2>
+    <h3>Информация о группе</h3>
+    <p>Специальность - {{ group.speciality }} {{ group.speciality.name }}, курс - {{ group.semester.course }}</p>
+    <p>Студентов в группе - {{ studentsNum }}</p>
+    <p>Куратор - {{ group.curator }}</p>
+    {% render_table semester %}
+    {% if user.role != 'ST' %}
+        <h3>Список студентов</h3>
+        {% render_table students %}
+    {% endif %}
+{% endblock %}

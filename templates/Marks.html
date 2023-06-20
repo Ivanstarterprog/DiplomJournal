@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block body %}
+    <script>
+        let UpdateMark = function (caller, markID, newMark){
+            $.post({
+                data: {'markID': markID,
+                        'newMark': newMark},
+                url: "/api/UpdateMark/",
+        })};
+
+        let UpdateLessonInfo = function (called, lessonID){
+            var date = $("#"+lessonID+'_date').val().split('-');
+            var newDate = date[2]+'.'+date[1]
+            $("#Dateid"+lessonID).html(newDate);
+            $.post({
+                data: {
+                    'lessonID': lessonID,
+                    'date': $("#"+lessonID+'_date').val(),
+                    'type': $("#"+lessonID+'_type').val(),
+                    'topic': $("#"+lessonID+'_topic').val(),
+                    'task': $("#"+lessonID+'_task').val()},
+                url: "/api/UpdateLessonInfo/"
+            })};
+
+            let UpdateSemestrMark = function (caller, markID, newMark){
+                $.post({
+                    data: {'markID': markID,
+                            'newMark': newMark},
+                    url: "/api/UpdateSemestrMark/",
+            })};
+    </script>
+    <h2>{{ subject }}</h2>
+    <h3>Таблица оценок</h3>
+    <div class="marksTable">
+        <table>
+            <thead>
+                <th rowspan="3" colspan="3">Оценки</th>
+                <tr>{% for lesson in lessons %}
+                    <th style="width: 15px;"><a href="#id{{ lesson.id }}"><div style="height:100%;width:100%">№{{ lesson.number }}</div></a></th>
+                {% endfor %}
+                <th></th>
+                {% if diplom %}
+                    <th></th>
+                {% endif %}
+                </tr>
+                <tr>{% for lesson in lessons %}
+                                <th style="width: 15px;"><a href="#id{{ lesson.id }}"><div id="Dateid{{ lesson.id }}" style="height:100%;width:100%">{{ lesson.date|date:'d.m' }}</div></a></th>
+                        {% endfor %}
+                    <th rowspan="7" colspan="1">
+                        C
+                    </th>
+                    {% if diplom %}
+                        <th rowspan="7" colspan="1">
+                            Д
+                        </th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for student, marks in students.items %}
+                        <tr>
+                        <th colspan="3">{{student.get_Fio}}</th>
+                        {% for mark in marks %}
+                            {% if mark.type == 'Normal' %}
+                                <td style="width: 15px;" colspan="1"><input style="width: 15px;" type="text"
+                                                                            {% if user.id != teacher.id %} disabled{% endif %}
+                                                                            name="{{ mark.id }}" value="{{ mark.mark }}" maxlength="1"
+                                    oninput="UpdateMark(this, markID=this.name, newMark=this.value)"></td>
+                            {% else %}
+                                <td colspan="1"><input type="text" style="width: 60px;"
+                                                       {% if user.id != teacher.id %} disabled {% endif %}
+                                                       name="{{ mark.id }}" value="{{ mark.mark }}" maxlength="8"
+                                    oninput="UpdateSemestrMark(this, markID=this.name, newMark=this.value)"></td>
+                            {% endif %}
+                        {% endfor %}
+                        </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <h3>Информация о занятии</h3>
+    <table>
+        <thead>
+            <th style="width: 5%">№</th>
+            <th style="width: 10%">Дата</th>
+            <th style="width: 10%;">Тип</th>
+            <th style="width: 30%;">Тема занятия</th>
+            <th>Самостоятельное задание</th>
+        </thead>
+        <tbody>
+        {% for lesson in lessons %}
+            <tr id="id{{ lesson.id }}">
+                <td style="width: 5%; padding: 0px">
+                    {{ lesson.number }}
+                </td>
+                <td style="width: 10%; padding: 0px">
+                    <input id="{{ lesson.id }}_date"
+                           {% if user.id != teacher.id %} disabled {% endif %}
+                           type="date" value="{{ lesson.date|date:'Y-m-d' }}"
+                        oninput="UpdateLessonInfo(this, {{ lesson.id }})">
+                </td>
+                <td style="width: 10%; padding: 0px">
+                    <select style="width: 100%; height: 100%"
+                            {% if user.id != teacher.id %} disabled {% endif %}
+                            id="{{ lesson.id }}_type"
+                    oninput="UpdateLessonInfo(this, {{ lesson.id }})">
+                        {% for choice in choices %}
+                            {% if choice|first == lesson.type %}
+                                <option selected="True" value="{{ choice|first }}">{{ choice|last }}</option>
+                            {% else %}
+                                <option value="{{ choice|first }}">{{ choice|last }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+                <td style="width: 30%; padding: 0px;">
+                    <textarea maxlength="125"
+                              {% if user.id != teacher.id %} disabled {% endif %}
+                        id="{{ lesson.id }}_topic"
+                        oninput="UpdateLessonInfo(this, {{ lesson.id }})">{{ lesson.topic }}</textarea>
+                </td>
+                <td style="padding: 0px;">
+                    <textarea style="resize: none; overflow: auto" maxlength="500"
+                              {% if user.id != teacher.id %} disabled {% endif %}
+                        id="{{ lesson.id }}_task"
+                        oninput="UpdateLessonInfo(this, {{ lesson.id }})">{{ lesson.independentTask }}</textarea>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

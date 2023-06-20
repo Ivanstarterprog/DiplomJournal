@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block body %}
+    <div class="day">
+        Понедельник
+        <input type="color">
+    </div>
+    <script>
+    var finduser = function (caller, mark){
+            var textarea = caller
+            $.post({
+                data: {'userID': 1,
+                    'mark': mark},
+                url: "/api/test/",
+        })};
+    </script>
+{% endblock %}
